@@ -1,0 +1,100 @@
+---
+title: "project1"
+author: "Safwan"
+date: "02/05/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#echo=TRUE is set as default
+library("knitr")
+
+```
+
+## R Markdown
+#steps: Number of steps taking in a 5-minute interval (missing values are coded as NA)
+#2. date: The date on which the measurement was taken in YYYY-MM-DD format
+#3. interval: Identifier for the 5-minute interval in which measurement was taken
+
+#Loading and preprocessing data
+```{r processing}
+
+data <- read.csv("activity.csv",header = T)
+dim(data)
+head(data)
+
+```
+#Total number of steps taken per day
+```{r total steps}
+library(ggplot2)
+library(plyr)
+totalNumberofSteps <- with(data, tapply(steps, as.factor(data$date), sum, na.rm = T))
+hist(totalNumberofSteps, main = "HISTOGRAM OF TOTAL NUMBER OF STEPS PER DAY", xlab = "TOTAL NUMBER OF STEPS")
+summary(totalNumberofSteps) #to get mean and median
+```
+#average daily pattern
+```{r stepspertime}
+library(dplyr)
+StepsPerTime <- aggregate(steps~interval,data=data,FUN=mean,na.action=na.omit)
+StepsPerTime$time <- StepsPerTime$interval/100
+# draw the line plot
+h <- ggplot(StepsPerTime, aes(time, steps))
+h+geom_line(col="brown")+ggtitle("AVERAGE STEPS PER TIME INTERVAL")+xlab("TIME")+ylab("STEPS")+theme(plot.title = element_text(face="bold", size=14))
+# table for dplyr
+ST <- tbl_df(StepsPerTime)
+# find the column
+ST %>% select(time, steps) %>% filter(steps==max(ST$steps))
+
+
+```
+#Imputing missing values
+```{r missing values}
+
+MissingData <- data[is.na(data$steps),]
+dim(MissingData )
+
+
+length(MissingData$steps)
+MeanSteps <- with(data, tapply(steps, data$interval, mean))
+MissingData$steps <-MeanSteps
+NewData <- rbind(data,MissingData)
+NewData <- NewData[order(NewData$date), ]
+TotalNumberofSteps <- with(NewData, tapply(steps, as.factor(NewData$date), sum))
+#Make a histogram of the total number of steps taken each day
+hist(TotalNumberofSteps, main = "HISTOGRAM OF TOTAL NUMBER OF STEPS PER DAY", xlab = "TOTAL NUMBER OF STEPS")
+summary(TotalNumberofSteps)
+
+```
+#Are there differences in activity patterns between weekdays and weekends?
+```{r weekdays}
+NewData$days <- weekdays(as.Date(NewData$date))
+# find weekend features in the dataset
+Weekend_Feature <- grep("Saturday|Sunday", NewData$days, ignore.case = T)
+# subset data of the weekend
+Weekend_Data<-  NewData[Weekend_Feature, ]
+Weekend_Data$weekday <- "weekend"
+
+# subset data of the weekday
+Weekday_Data <- subset(NewData,NewData$days!=Weekend_Feature)
+
+Weekday_Data$weekday <- "weekday"
+
+NewData2 <- rbind(Weekday_Data, Weekend_Data)
+mean_number_steps <- aggregate(steps~ interval+weekday, NewData2, mean)
+g <- qplot(interval, steps, data = mean_number_steps, facets = weekday~.)
+g + geom_line(size = 1) + ylab("MEAN STEPS") + ggtitle("AVERAGE NUMBER OF STEPS TAKEN \n AVERAGED ACROSS ALL WEEKDAYS AND WEEKENDS ")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
