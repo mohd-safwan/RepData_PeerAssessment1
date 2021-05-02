@@ -59,7 +59,7 @@ totalNumberofSteps <- with(data, tapply(steps, as.factor(data$date), sum, na.rm 
 hist(totalNumberofSteps, main = "HISTOGRAM OF TOTAL NUMBER OF STEPS PER DAY", xlab = "TOTAL NUMBER OF STEPS")
 ```
 
-<img src="project1_files/figure-html/total steps-1.png" width="672" />
+<img src="project1_files/figure-html/total steps-1.png" width="800" />
 
 ```r
 summary(totalNumberofSteps) #to get mean and median
@@ -111,7 +111,7 @@ h <- ggplot(StepsPerTime, aes(time, steps))
 h+geom_line(col="brown")+ggtitle("AVERAGE STEPS PER TIME INTERVAL")+xlab("TIME")+ylab("STEPS")+theme(plot.title = element_text(face="bold", size=14))
 ```
 
-<img src="project1_files/figure-html/stepspertime-1.png" width="672" />
+<img src="project1_files/figure-html/stepspertime-1.png" width="800" />
 
 ```r
 # table for dplyr
@@ -163,7 +163,7 @@ TotalNumberofSteps <- with(NewData, tapply(steps, as.factor(NewData$date), sum))
 hist(TotalNumberofSteps, main = "HISTOGRAM OF TOTAL NUMBER OF STEPS PER DAY", xlab = "TOTAL NUMBER OF STEPS")
 ```
 
-<img src="project1_files/figure-html/missing values-1.png" width="672" />
+<img src="project1_files/figure-html/missing values-1.png" width="800" />
 
 ```r
 summary(TotalNumberofSteps)
@@ -201,7 +201,7 @@ g <- qplot(interval, steps, data = mean_number_steps, facets = weekday~.)
 g + geom_line(size = 1) + ylab("MEAN STEPS") + ggtitle("AVERAGE NUMBER OF STEPS TAKEN \n AVERAGED ACROSS ALL WEEKDAYS AND WEEKENDS ")
 ```
 
-<img src="project1_files/figure-html/weekdays-1.png" width="672" />
+<img src="project1_files/figure-html/weekdays-1.png" width="800" />
 
 
 
